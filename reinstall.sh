@@ -76,7 +76,6 @@ Usage: $reinstall_____ anolis      7|8|23
                        [--ssh-port  PORT]
                        [--web-port  PORT]
                        [--frpc-toml TOML]
-                       [--luks]
                        [--luks-password PASSWORD]
 
                        For Windows Only:
@@ -3762,7 +3761,6 @@ for o in ci installer debug minimal allow-ping force-cn help \
     commit: \
     frpc-conf: frpc-config: frpc-toml: \
     force: \
-    luks: \
     luks-password: \
     force-old-windows-setup:; do
     [ -n "$long_opts" ] && long_opts+=,
@@ -3845,12 +3843,9 @@ while true; do
         force=$2
         shift 2
         ;;
-    --luks)
-        ENABLE_LUKS=true
-        shift
-        ;;
     --luks-password)
         [ -n "$2" ] || error_and_exit "Need value for $1"
+        ENABLE_LUKS=true
         LUKS_PASSWORD="$2"
         shift 2
         ;;
