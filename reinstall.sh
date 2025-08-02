@@ -3850,6 +3850,7 @@ while true; do
         shift
         ;;
     --luks-password)
+        [ -n "$2" ] || error_and_exit "Need value for $1"
         LUKS_PASSWORD="$2"
         shift 2
         ;;
