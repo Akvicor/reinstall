@@ -3576,7 +3576,7 @@ This script is outdated, please download reinstall.sh again.
         fi
 
         # Copy debian.cfg to initrd
-        cp "$confhome/debian.cfg" "$initrd_dir/debian.cfg"
+        curl -Lo $initrd_dir/debian.cfg $confhome/debian.cfg
 
         # Replace temporary password with actual LUKS password
         sed -i "s/temp_password/$LUKS_PASSWORD/g" "$initrd_dir/debian.cfg"
