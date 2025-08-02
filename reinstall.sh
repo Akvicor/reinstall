@@ -3,12 +3,13 @@
 # shellcheck disable=SC2086
 
 set -eE
-confhome=https://raw.githubusercontent.com/bin456789/reinstall/main
-confhome_cn=https://cnb.cool/bin456789/reinstall/-/git/raw/main
+confhome=https://raw.githubusercontent.com/Akvicor/reinstall/main
+confhome_cn=https://cnb.cool/Akvicor/reinstall/-/git/raw/main
 # confhome_cn=https://www.ghproxy.cc/https://raw.githubusercontent.com/bin456789/reinstall/main
 
 # 默认密码
-DEFAULT_PASSWORD=123@@@
+DEFAULT_PASSWORD=nKddAkQf64aYBJX6zigD6kOi4KpULdUA
+LUKS_PASSWORD=tJ9iJmXCFXvYqr1VAX90E7hmJB94jwLi
 
 # 用于判断 reinstall.sh 和 trans.sh 是否兼容
 SCRIPT_VERSION=4BACD833-A585-23BA-6CBB-9AA4E08E0003
@@ -3565,6 +3566,27 @@ This script is outdated, please download reinstall.sh again.
     else
         save_password $initrd_dir/configs
     fi
+
+    # Handle LUKS encryption if enabled
+    if [ "$ENABLE_LUKS" = "true" ]; then
+        # If no LUKS password is set, use the regular password
+        if [ -z "$LUKS_PASSWORD" ]; then
+            LUKS_PASSWORD="$password"
+        fi
+
+        # Copy debian.cfg to initrd
+        cp "$confhome/debian.cfg" "$initrd_dir/debian.cfg"
+
+        # Replace temporary password with actual LUKS password
+        sed -i "s/temp_password/$LUKS_PASSWORD/g" "$initrd_dir/debian.cfg"
+
+        # Update the kickstart file path
+        for step in nextos finalos; do
+            if [ "$(eval echo \${${step}_ks})" = "$confhome/debian.cfg" ]; then
+                eval ${step}_ks="$initrd_dir/debian.cfg"
+            fi
+        done
+    fi
     if [ -n "$frpc_config" ]; then
         cat "$frpc_config" >$initrd_dir/configs/frpc.toml
     fi
@@ -3818,6 +3840,13 @@ while true; do
         fi
         force=$2
         shift 2
+        ;;
+    --luks)
+        ENABLE_LUKS=true
+        ;;
+    --luks-password)
+        LUKS_PASSWORD="$2"
+        shift
         ;;
     --passwd | --password)
         [ -n "$2" ] || error_and_exit "Need value for $1"
