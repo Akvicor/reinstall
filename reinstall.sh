@@ -3583,7 +3583,7 @@ This script is outdated, please download reinstall.sh again.
 
         # Update the kickstart file path
         for step in nextos finalos; do
-            if [ "$(eval echo \${${step}_ks})" = "$confhome/debian.cfg" ]; then
+            if [ "$(eval echo \${${step}_ks})" = "$initrd_dir/debian.cfg" ]; then
                 eval ${step}_ks="$initrd_dir/debian.cfg"
             fi
         done
