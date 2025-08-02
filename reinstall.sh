@@ -3843,10 +3843,11 @@ while true; do
         ;;
     --luks)
         ENABLE_LUKS=true
+        shift
         ;;
     --luks-password)
         LUKS_PASSWORD="$2"
-        shift
+        shift 2
         ;;
     --passwd | --password)
         [ -n "$2" ] || error_and_exit "Need value for $1"
